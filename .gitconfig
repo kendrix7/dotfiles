@@ -1,2 +1,4 @@
 [user]
 	email = marknielsen7@outlook.com
+[push]
+	autoSetupRemote = true
