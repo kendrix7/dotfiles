@@ -31,3 +31,4 @@ if ! command -v volta >/dev/null 2>&1; then
 fi
 
 echo "Setup complete! Restart terminal and run: volta install node"
+git config --global push.autoSetupRemote true
