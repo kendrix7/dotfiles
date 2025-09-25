@@ -137,3 +137,6 @@ alias nrdn='npm run dev:nodb'
 alias killport='function _killport() { lsof -ti:$1 | xargs kill -9; }; _killport'
 # Quick commit and push (usage: gcp "commit message")
 alias gcp='function _gcp() { git add . && git commit -m "$1" && git push; }; _gcp'
+alias shortcuts="~/dotfiles/list_shortcuts.sh"
+alias updatetoken="~/dotfiles/update_npm_token.sh"
+alias reload="source ~/.zshrc"
