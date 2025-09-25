@@ -131,3 +131,9 @@ alias nrs='npm run start'
 alias nrt='npm run test'
 alias nrtu='npm run test:unit'
 alias nrdn='npm run dev:nodb'
+
+# Useful development scripts
+# Kill whatever is running on a specific port (usage: killport 3000)
+alias killport='function _killport() { lsof -ti:$1 | xargs kill -9; }; _killport'
+# Quick commit and push (usage: gcp "commit message")
+alias gcp='function _gcp() { git add . && git commit -m "$1" && git push; }; _gcp'
