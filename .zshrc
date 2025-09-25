@@ -109,3 +109,8 @@ alias npmr="npm run start"
 
 export PATH="$HOME/.volta/bin:$HOME/bin:/usr/local/bin:$PATH"
 source ~/dotfiles/.env.local 2>/dev/null || true
+
+# Project shortcuts
+alias cdpui='cd ~/code/work/cdp-ui'
+alias cdpbe='cd ~/code/work/cdp-behind-service'
+alias work='cd ~/code/work'
