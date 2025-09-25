@@ -114,3 +114,20 @@ source ~/dotfiles/.env.local 2>/dev/null || true
 alias cdpui='cd ~/code/work/cdp-ui'
 alias cdpbe='cd ~/code/work/cdp-behind-service'
 alias work='cd ~/code/work'
+
+# Git shortcuts
+alias gs='git status'
+alias ga='git add'
+alias gc='git commit -m'
+alias gp='git push'
+alias gl='git pull'
+alias gco='git checkout'
+alias gb='git branch'
+alias gd='git diff'
+alias glog='git log --oneline --graph'
+
+# NPM shortcuts
+alias nrs='npm run start'
+alias nrt='npm run test'
+alias nrtu='npm run test:unit'
+alias nrdn='npm run dev:nodb'
