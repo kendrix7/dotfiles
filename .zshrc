@@ -140,3 +140,61 @@ alias gcp='function _gcp() { git add . && git commit -m "$1" && git push; }; _gc
 alias shortcuts="~/dotfiles/list_shortcuts.sh"
 alias updatetoken="~/dotfiles/update_npm_token.sh"
 alias reload="source ~/.zshrc"
+
+# Enhanced ideas management function
+idea() {
+    local IDEAS_FILE="$HOME/dotfiles/ideas.txt"
+    
+    # Create ideas file if it doesn't exist
+    if [ ! -f "$IDEAS_FILE" ]; then
+        touch "$IDEAS_FILE"
+    fi
+    
+    # Handle delete command
+    if [ "$1" = "rm" ] && [ -n "$2" ]; then
+        local line_num="$2"
+        local total_lines=$(wc -l < "$IDEAS_FILE")
+        
+        if ! [[ "$line_num" =~ ^[0-9]+$ ]]; then
+            echo "Error: Please provide a valid line number"
+            return 1
+        fi
+        
+        if [ "$line_num" -lt 1 ] || [ "$line_num" -gt "$total_lines" ]; then
+            echo "Error: Line number must be between 1 and $total_lines"
+            return 1
+        fi
+        
+        # Show what we're deleting
+        local deleted_idea=$(sed -n "${line_num}p" "$IDEAS_FILE")
+        echo "Deleting idea #$line_num: $deleted_idea"
+        
+        # Delete the line
+        sed -i '' "${line_num}d" "$IDEAS_FILE"
+        echo "Idea deleted successfully"
+        return 0
+    fi
+    
+    # If no arguments, list all ideas
+    if [ $# -eq 0 ]; then
+        if [ ! -s "$IDEAS_FILE" ]; then
+            echo "No ideas yet. Add one with: idea \"your idea here\""
+            echo "Delete ideas with: idea rm <number>"
+            return 0
+        fi
+        
+        echo "=== MY WORKFLOW IDEAS ==="
+        # Number the ideas and display them
+        cat -n "$IDEAS_FILE"
+        echo ""
+        echo "Total ideas: $(wc -l < "$IDEAS_FILE")"
+        echo "Delete with: idea rm <number>"
+    else
+        # Add new idea (join all arguments into one string)
+        local NEW_IDEA="$*"
+        
+        # Add timestamp and idea to file
+        echo "$(date '+%Y-%m-%d') - $NEW_IDEA" >> "$IDEAS_FILE"
+        echo "Added idea: $NEW_IDEA"
+    fi
+}
