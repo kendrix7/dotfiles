@@ -107,5 +107,5 @@ alias npmr="npm run start"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-export NPM_TOKEN=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
 export PATH="$HOME/.volta/bin:$HOME/bin:/usr/local/bin:$PATH"
+source ~/dotfiles/.env.local 2>/dev/null || true
