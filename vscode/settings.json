@@ -17,5 +17,6 @@
   "editor.inlineSuggest.edits.renderSideBySide": "never",
   "github.copilot.chat.agent.autoFix": false,
   "github.copilot.chat.agent.runTasks": false,
-  "github.copilot.chat.codeGeneration.useInstructionFiles": false
+  "github.copilot.chat.codeGeneration.useInstructionFiles": false,
+  "workbench.sideBar.location": "right"
 }
