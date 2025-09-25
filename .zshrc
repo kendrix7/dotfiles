@@ -103,7 +103,6 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-alias npmr="npm run start"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
