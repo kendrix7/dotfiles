@@ -197,3 +197,24 @@ idea() {
         echo "Added idea: $NEW_IDEA"
     fi
 }
+alias compose='cd ~/code/work/docker-compose'
+
+# Docker service shortcuts
+alias redis-up='cd ~/code/work/docker-compose/Redis && docker-compose up -d'
+alias redis-down='cd ~/code/work/docker-compose/Redis && docker-compose down'
+alias postgres-up='cd ~/code/work/docker-compose/Postgres && docker-compose up -d'
+alias postgres-down='cd ~/code/work/docker-compose/Postgres && docker-compose down'
+alias kafka-up='cd ~/code/work/docker-compose/Kafka && docker-compose up -d'
+alias kafka-down='cd ~/code/work/docker-compose/Kafka && docker-compose down'
+alias dev-services-up='redis-up && postgres-up && kafka-up'
+alias dev-services-down='redis-down && postgres-down && kafka-down'
+
+# Docker service shortcuts
+alias redis-up='cd ~/code/work/docker-compose/Redis && docker-compose up -d'
+alias redis-down='cd ~/code/work/docker-compose/Redis && docker-compose down'
+alias postgres-up='cd ~/code/work/docker-compose/Postgres && docker-compose up -d'
+alias postgres-down='cd ~/code/work/docker-compose/Postgres && docker-compose down'
+alias kafka-up='cd ~/code/work/docker-compose/Kafka && docker-compose up -d'
+alias kafka-down='cd ~/code/work/docker-compose/Kafka && docker-compose down'
+alias dev-services-up='redis-up && postgres-up && kafka-up'
+alias dev-services-down='redis-down && postgres-down && kafka-down'
