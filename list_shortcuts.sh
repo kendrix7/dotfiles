@@ -47,7 +47,10 @@ echo "  nrtu         - npm run test:unit"
 echo "  nrdn         - npm run dev:nodb"
 echo ""
 echo "🛠️  UTILITY SCRIPTS:"
+echo "  dev-status       - Check development environment status (-v for verbose)"
 echo "  update-shortcuts - Auto-update shortcuts list and push to git"
+echo "  add-alias        - Add new alias: add-alias <name> <command>"
+echo "  remove-alias     - Remove alias: remove-alias <name>"
 echo "  reload           - Reload shell configuration"
 echo "  shortcuts        - Display this help menu"
 echo "  killport 3000    - Kill process on port 3000"
@@ -57,32 +60,7 @@ echo "💡 TIPS:"
 echo "  - All aliases are defined in ~/.zshrc"
 echo "  - Run 'source ~/.zshrc' after editing shell config"
 echo "  - Use 'which aliasname' to see what an alias does"
+echo "  - Run 'dev-status' for environment health check"
 echo ""
 
-echo "🔍 CURRENT STATUS:"
-if [ -n "$NPM_TOKEN" ]; then
-    echo "  ✅ NPM_TOKEN is set and ready"
-else
-    echo "  ❌ NPM_TOKEN not found"
-fi
-
-if command -v volta >/dev/null 2>&1; then
-    echo "  ✅ Volta (Node manager) installed: $(volta --version)"
-else
-    echo "  ❌ Volta not found"
-fi
-
-if command -v code >/dev/null 2>&1; then
-    echo "  ✅ VS Code CLI available"
-else
-    echo "  ❌ VS Code CLI not available"
-fi
-
-if command -v docker >/dev/null 2>&1; then
-    echo "  ✅ Docker installed: $(docker --version | cut -d' ' -f3 | cut -d',' -f1)"
-else
-    echo "  ❌ Docker not installed"
-fi
-
-echo ""
 echo "Run individual commands to test them out!"
