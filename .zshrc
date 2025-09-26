@@ -218,3 +218,10 @@ alias kafka-up='cd ~/code/work/docker-compose/Kafka && docker-compose up -d'
 alias kafka-down='cd ~/code/work/docker-compose/Kafka && docker-compose down'
 alias dev-services-up='redis-up && postgres-up && kafka-up'
 alias dev-services-down='redis-down && postgres-down && kafka-down'
+
+# Token generation shortcuts
+alias token-local='cd ~/code/work/cdp-behind-service && ./bin/admin token --env local'
+alias token-dev='cd ~/code/work/cdp-behind-service && ./bin/admin token --env dev'
+alias token-stage='cd ~/code/work/cdp-behind-service && ./bin/admin token --env stage'
+alias token-prod='cd ~/code/work/cdp-behind-service && ./bin/admin token --env prod'
+alias dotfiles='cd ~/dotfiles'
