@@ -209,19 +209,173 @@ alias kafka-down='cd ~/code/work/docker-compose/Kafka && docker-compose down'
 alias dev-services-up='redis-up && postgres-up && kafka-up'
 alias dev-services-down='redis-down && postgres-down && kafka-down'
 
-# Docker service shortcuts
-alias redis-up='cd ~/code/work/docker-compose/Redis && docker-compose up -d'
-alias redis-down='cd ~/code/work/docker-compose/Redis && docker-compose down'
-alias postgres-up='cd ~/code/work/docker-compose/Postgres && docker-compose up -d'
-alias postgres-down='cd ~/code/work/docker-compose/Postgres && docker-compose down'
-alias kafka-up='cd ~/code/work/docker-compose/Kafka && docker-compose up -d'
-alias kafka-down='cd ~/code/work/docker-compose/Kafka && docker-compose down'
-alias dev-services-up='redis-up && postgres-up && kafka-up'
-alias dev-services-down='redis-down && postgres-down && kafka-down'
-
 # Token generation shortcuts
 alias token-local='cd ~/code/work/cdp-behind-service && ./bin/admin token --env local'
 alias token-dev='cd ~/code/work/cdp-behind-service && ./bin/admin token --env dev'
 alias token-stage='cd ~/code/work/cdp-behind-service && ./bin/admin token --env stage'
 alias token-prod='cd ~/code/work/cdp-behind-service && ./bin/admin token --env prod'
 alias dotfiles='cd ~/dotfiles'
+alias update-shortcuts='~/dotfiles/update_shortcuts.sh'
+alias update-shortcuts='~/dotfiles/update_shortcuts.sh'
+
+# Function to add a new alias
+add-alias() {
+    if [ $# -ne 2 ]; then
+        echo "Usage: add-alias <alias_name> <command>"
+        echo "Example: add-alias ll 'ls -la'"
+        return 1
+    fi
+    
+    local alias_name="$1"
+    local command="$2"
+    
+    # Add the alias to .zshrc
+    echo "alias $alias_name='$command'" >> ~/dotfiles/.zshrc
+    
+    # Reload the shell to make it available immediately
+    source ~/dotfiles/.zshrc
+    
+    echo "✅ Added alias: $alias_name -> $command"
+    echo "🔄 Updating shortcuts list..."
+    
+    # Automatically update shortcuts
+    update-shortcuts
+}
+
+# Function to remove an alias
+remove-alias() {
+    if [ $# -ne 1 ]; then
+        echo "Usage: remove-alias <alias_name>"
+        echo "Example: remove-alias ll"
+        return 1
+    fi
+    
+    local alias_name="$1"
+    
+    # Check if alias exists
+    if ! grep -q "^alias $alias_name=" ~/dotfiles/.zshrc; then
+        echo "❌ Alias '$alias_name' not found in .zshrc"
+        return 1
+    fi
+    
+    # Remove the alias from .zshrc
+    sed -i.bak "/^alias $alias_name=/d" ~/dotfiles/.zshrc
+    
+    # Unset the alias in current session
+    unalias "$alias_name" 2>/dev/null
+    
+    echo "✅ Removed alias: $alias_name"
+    echo "🔄 Updating shortcuts list..."
+    
+    # Automatically update shortcuts
+    update-shortcuts
+}
+
+alias dev-status='~/dotfiles/dev_status.sh'
+
+# Frontend environment switching functions using comment/uncomment approach
+
+
+
+
+
+
+
+# Fixed Frontend Environment Functions
+backup_and_modify_frontend_env() {
+    local env_file="$HOME/code/work/cdp-ui/.env"
+    local backup_file="$HOME/code/work/cdp-ui/.env.backup"
+    
+    if [ ! -f "$backup_file" ]; then
+        cp "$env_file" "$backup_file"
+        echo "📋 Created backup of original .env"
+    fi
+}
+
+frontend-local() {
+    echo "🚀 Starting frontend with LOCAL backend..."
+    backup_and_modify_frontend_env
+    
+    cd ~/code/work/cdp-ui
+    
+    sed -i.tmp 's/^VITE_BEHIND_SERVICE_API_URL=/#VITE_BEHIND_SERVICE_API_URL=/' .env
+    sed -i.tmp 's/^# VITE_BEHIND_SERVICE_API_URL=http:\/\/localhost:3001/VITE_BEHIND_SERVICE_API_URL=http:\/\/localhost:3001/' .env
+    sed -i.tmp 's/^#VITE_BEHIND_SERVICE_API_URL=http:\/\/localhost:3001/VITE_BEHIND_SERVICE_API_URL=http:\/\/localhost:3001/' .env
+    
+    rm .env.tmp
+    echo "✅ Frontend configured for LOCAL backend"
+    npm run start
+}
+
+frontend-dev() {
+    echo "🚀 Starting frontend with DEV backend..."
+    backup_and_modify_frontend_env
+    
+    cd ~/code/work/cdp-ui
+    
+    sed -i.tmp 's/^VITE_BEHIND_SERVICE_API_URL=/#VITE_BEHIND_SERVICE_API_URL=/' .env
+    sed -i.tmp 's/^#VITE_BEHIND_SERVICE_API_URL=https:\/\/cdp-behind-service\.dev\.platform\.aws\.chgit\.com/VITE_BEHIND_SERVICE_API_URL=https:\/\/cdp-behind-service.dev.platform.aws.chgit.com/' .env
+    
+    rm .env.tmp
+    echo "✅ Frontend configured for DEV backend"
+    npm run start
+}
+
+frontend-stage() {
+    echo "🚀 Starting frontend with STAGE backend..."
+    backup_and_modify_frontend_env
+    
+    cd ~/code/work/cdp-ui
+    
+    sed -i.tmp 's/^VITE_BEHIND_SERVICE_API_URL=/#VITE_BEHIND_SERVICE_API_URL=/' .env
+    sed -i.tmp 's/^#VITE_BEHIND_SERVICE_API_URL=https:\/\/cdp-behind-service\.stage\.platform\.aws\.chgit\.com/VITE_BEHIND_SERVICE_API_URL=https:\/\/cdp-behind-service.stage.platform.aws.chgit.com/' .env
+    
+    rm .env.tmp
+    echo "✅ Frontend configured for STAGE backend"
+    npm run start
+}
+
+frontend-branch() {
+    if [ $# -ne 1 ]; then
+        echo "Usage: frontend-branch <branch-name>"
+        return 1
+    fi
+    
+    local branch_name="$1"
+    local branch_url="https://cdp-${branch_name}--cdp-behind-service.feature.chgapi.com"
+    
+    echo "🚀 Starting frontend with BRANCH backend ($branch_name)..."
+    backup_and_modify_frontend_env
+    
+    cd ~/code/work/cdp-ui
+    
+    sed -i.tmp 's/^VITE_BEHIND_SERVICE_API_URL=/#VITE_BEHIND_SERVICE_API_URL=/' .env
+    
+    if grep -q "feature\.chgapi\.com" .env; then
+        sed -i.tmp "s|.*feature\.chgapi\.com.*|VITE_BEHIND_SERVICE_API_URL=$branch_url|" .env
+    else
+        echo "VITE_BEHIND_SERVICE_API_URL=$branch_url" >> .env
+    fi
+    
+    rm .env.tmp
+    echo "✅ Frontend configured for BRANCH backend ($branch_url)"
+    npm run start
+}
+
+frontend-status() {
+    echo "========================================"
+    echo "    FRONTEND CONFIGURATION STATUS"
+    echo "========================================"
+    
+    cd ~/code/work/cdp-ui 2>/dev/null || return 1
+    
+    if [ -f .env ]; then
+        local active_url=$(grep '^VITE_BEHIND_SERVICE_API_URL=' .env | cut -d'=' -f2-)
+        if [ -n "$active_url" ]; then
+            echo "Active: $active_url"
+        else
+            echo "❌ No active backend URL"
+        fi
+    fi
+}
+

@@ -1,0 +1,170 @@
+#!/bin/bash
+
+DOTFILES_DIR="$HOME/dotfiles"
+ZSHRC_FILE="$DOTFILES_DIR/.zshrc"
+SHORTCUTS_FILE="$DOTFILES_DIR/list_shortcuts.sh"
+
+# Create the shortcuts file
+cat > "$SHORTCUTS_FILE" << 'HEADER'
+#!/bin/bash
+
+echo "========================================="
+echo "       MY DEVELOPMENT SHORTCUTS"
+echo "========================================="
+echo ""
+
+echo "📁 PROJECT NAVIGATION:"
+HEADER
+
+# Navigation aliases
+for alias_name in work cdpui cdpbe compose dotfiles; do
+    if grep -q "^alias $alias_name=" "$ZSHRC_FILE"; then
+        case "$alias_name" in
+            work) echo 'echo "  work         - Jump to work projects directory"' >> "$SHORTCUTS_FILE" ;;
+            cdpui) echo 'echo "  cdpui        - Jump to cdp-ui project directory"' >> "$SHORTCUTS_FILE" ;;
+            cdpbe) echo 'echo "  cdpbe        - Jump to cdp-behind-service project directory"' >> "$SHORTCUTS_FILE" ;;
+            compose) echo 'echo "  compose      - Jump to docker-compose services directory"' >> "$SHORTCUTS_FILE" ;;
+            dotfiles) echo 'echo "  dotfiles     - Jump to dotfiles directory"' >> "$SHORTCUTS_FILE" ;;
+        esac
+    fi
+done
+
+echo 'echo ""' >> "$SHORTCUTS_FILE"
+echo 'echo "🔀 GIT SHORTCUTS:"' >> "$SHORTCUTS_FILE"
+
+# Git aliases
+for alias_name in gs ga gc gp gl gco gb gd glog; do
+    if grep -q "^alias $alias_name=" "$ZSHRC_FILE"; then
+        case "$alias_name" in
+            gs) echo 'echo "  gs           - git status"' >> "$SHORTCUTS_FILE" ;;
+            ga) echo 'echo "  ga           - git add"' >> "$SHORTCUTS_FILE" ;;
+            gc) echo 'echo "  gc '"'"'msg'"'"'     - git commit -m '"'"'msg'"'"'"' >> "$SHORTCUTS_FILE" ;;
+            gp) echo 'echo "  gp           - git push"' >> "$SHORTCUTS_FILE" ;;
+            gl) echo 'echo "  gl           - git pull"' >> "$SHORTCUTS_FILE" ;;
+            gco) echo 'echo "  gco          - git checkout"' >> "$SHORTCUTS_FILE" ;;
+            gb) echo 'echo "  gb           - git branch"' >> "$SHORTCUTS_FILE" ;;
+            gd) echo 'echo "  gd           - git diff"' >> "$SHORTCUTS_FILE" ;;
+            glog) echo 'echo "  glog         - git log --oneline --graph"' >> "$SHORTCUTS_FILE" ;;
+        esac
+    fi
+done
+
+if grep -q "gcp()" "$ZSHRC_FILE"; then
+    echo 'echo "  gcp '"'"'msg'"'"'    - git add . && git commit -m '"'"'msg'"'"' && git push"' >> "$SHORTCUTS_FILE"
+fi
+
+echo 'echo ""' >> "$SHORTCUTS_FILE"
+echo 'echo "🐳 DOCKER SERVICES:"' >> "$SHORTCUTS_FILE"
+
+# Docker aliases
+for alias_name in redis-up redis-down postgres-up postgres-down kafka-up kafka-down dev-services-up dev-services-down; do
+    if grep -q "^alias $alias_name=" "$ZSHRC_FILE"; then
+        case "$alias_name" in
+            redis-up) echo 'echo "  redis-up         - Start Redis container"' >> "$SHORTCUTS_FILE" ;;
+            redis-down) echo 'echo "  redis-down       - Stop Redis container"' >> "$SHORTCUTS_FILE" ;;
+            postgres-up) echo 'echo "  postgres-up      - Start PostgreSQL container"' >> "$SHORTCUTS_FILE" ;;
+            postgres-down) echo 'echo "  postgres-down    - Stop PostgreSQL container"' >> "$SHORTCUTS_FILE" ;;
+            kafka-up) echo 'echo "  kafka-up         - Start Kafka ecosystem"' >> "$SHORTCUTS_FILE" ;;
+            kafka-down) echo 'echo "  kafka-down       - Stop Kafka ecosystem"' >> "$SHORTCUTS_FILE" ;;
+            dev-services-up) echo 'echo "  dev-services-up  - Start all development services"' >> "$SHORTCUTS_FILE" ;;
+            dev-services-down) echo 'echo "  dev-services-down - Stop all development services"' >> "$SHORTCUTS_FILE" ;;
+        esac
+    fi
+done
+
+echo 'echo ""' >> "$SHORTCUTS_FILE"
+echo 'echo "🔑 TOKEN GENERATION:"' >> "$SHORTCUTS_FILE"
+
+# Token aliases
+for alias_name in token-local token-dev token-stage token-prod; do
+    if grep -q "^alias $alias_name=" "$ZSHRC_FILE"; then
+        case "$alias_name" in
+            token-local) echo 'echo "  token-local      - Generate token for local environment"' >> "$SHORTCUTS_FILE" ;;
+            token-dev) echo 'echo "  token-dev        - Generate token for dev environment"' >> "$SHORTCUTS_FILE" ;;
+            token-stage) echo 'echo "  token-stage      - Generate token for stage environment"' >> "$SHORTCUTS_FILE" ;;
+            token-prod) echo 'echo "  token-prod       - Generate token for prod environment"' >> "$SHORTCUTS_FILE" ;;
+        esac
+    fi
+done
+
+echo 'echo ""' >> "$SHORTCUTS_FILE"
+echo 'echo "📦 NPM SHORTCUTS:"' >> "$SHORTCUTS_FILE"
+
+# NPM aliases
+for alias_name in nrs nrt nrtu nrdn; do
+    if grep -q "^alias $alias_name=" "$ZSHRC_FILE"; then
+        case "$alias_name" in
+            nrs) echo 'echo "  nrs          - npm run start"' >> "$SHORTCUTS_FILE" ;;
+            nrt) echo 'echo "  nrt          - npm run test"' >> "$SHORTCUTS_FILE" ;;
+            nrtu) echo 'echo "  nrtu         - npm run test:unit"' >> "$SHORTCUTS_FILE" ;;
+            nrdn) echo 'echo "  nrdn         - npm run dev:nodb"' >> "$SHORTCUTS_FILE" ;;
+        esac
+    fi
+done
+
+echo 'echo ""' >> "$SHORTCUTS_FILE"
+echo 'echo "🌐 FRONTEND ENVIRONMENTS:"' >> "$SHORTCUTS_FILE"
+echo 'echo "  frontend-local   - Start frontend with local backend"' >> "$SHORTCUTS_FILE"
+echo 'echo "  frontend-dev     - Start frontend with dev backend"' >> "$SHORTCUTS_FILE"
+echo 'echo "  frontend-stage   - Start frontend with stage backend"' >> "$SHORTCUTS_FILE"
+echo 'echo "  frontend-branch  - Start frontend with branch backend: frontend-branch <name>"' >> "$SHORTCUTS_FILE"
+
+echo 'echo ""' >> "$SHORTCUTS_FILE"
+echo 'echo "🛠️  UTILITY SCRIPTS:"' >> "$SHORTCUTS_FILE"
+
+# Key utilities
+echo 'echo "  dev-status       - Check development environment status (-v for verbose)"' >> "$SHORTCUTS_FILE"
+echo 'echo "  update-shortcuts - Auto-update shortcuts list and push to git"' >> "$SHORTCUTS_FILE"
+echo 'echo "  add-alias        - Add new alias: add-alias <name> <command>"' >> "$SHORTCUTS_FILE"
+echo 'echo "  remove-alias     - Remove alias: remove-alias <name>"' >> "$SHORTCUTS_FILE"
+
+# Other utility aliases
+for alias_name in screenshots dotfiles-push reload shortcuts; do
+    if grep -q "^alias $alias_name=" "$ZSHRC_FILE"; then
+        case "$alias_name" in
+            screenshots) echo 'echo "  screenshots      - Open screenshots folder"' >> "$SHORTCUTS_FILE" ;;
+            dotfiles-push) echo 'echo "  dotfiles-push    - Commit and push dotfiles changes"' >> "$SHORTCUTS_FILE" ;;
+            reload) echo 'echo "  reload           - Reload shell configuration"' >> "$SHORTCUTS_FILE" ;;
+            shortcuts) echo 'echo "  shortcuts        - Display this help menu"' >> "$SHORTCUTS_FILE" ;;
+        esac
+    fi
+done
+
+if grep -q "killport()" "$ZSHRC_FILE"; then
+    echo 'echo "  killport 3000    - Kill process on port 3000"' >> "$SHORTCUTS_FILE"
+fi
+
+# Add footer
+cat >> "$SHORTCUTS_FILE" << 'FOOTER'
+echo ""
+
+echo "💡 TIPS:"
+echo "  - All aliases are defined in ~/.zshrc"
+echo "  - Run 'source ~/.zshrc' after editing shell config"
+echo "  - Use 'which aliasname' to see what an alias does"
+echo "  - Run 'dev-status' for environment health check"
+echo ""
+
+echo "Run individual commands to test them out!"
+FOOTER
+
+chmod +x "$SHORTCUTS_FILE"
+
+# Auto-commit and push changes
+cd "$DOTFILES_DIR"
+if ! git diff --quiet HEAD -- list_shortcuts.sh 2>/dev/null; then
+    echo "📝 Changes detected, committing to git..."
+    git add list_shortcuts.sh
+    TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
+    git commit -m "Auto-update shortcuts list - $TIMESTAMP"
+    
+    if git remote get-url origin &> /dev/null; then
+        echo "📤 Pushing changes to GitHub..."
+        git push
+        echo "✅ Changes pushed to GitHub successfully!"
+    else
+        echo "⚠️  No remote repository configured, skipping push"
+    fi
+fi
+
+echo "✅ Shortcuts list updated successfully!"
