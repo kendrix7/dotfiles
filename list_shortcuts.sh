@@ -54,6 +54,7 @@ echo "  frontend-branch  - Start frontend with branch backend: frontend-branch <
 echo ""
 echo "📋 CLIPBOARD UTILITIES:"
 echo "  copy-setup       - Copy full development environment context to clipboard"
+echo "  copy-screenshot  - Copy most recent screenshot to clipboard"
 echo ""
 echo "🛠️  UTILITY SCRIPTS:"
 echo "  dev-status       - Check development environment status (-v for verbose)"
