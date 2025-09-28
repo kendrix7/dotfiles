@@ -45,17 +45,21 @@ fi
 echo 'echo ""' >> "$SHORTCUTS_FILE"
 echo 'echo "📁 PROJECT NAVIGATION:"' >> "$SHORTCUTS_FILE"
 
-for alias_name in work cdpui cdpbe compose dotfiles; do
-    if grep -q "^alias $alias_name=" "$ZSHRC_FILE"; then
+nav_aliases=$(grep -E "^alias [a-zA-Z0-9_-]+='cd [^&]*'$" "$ZSHRC_FILE" | sed "s/alias \([^=]*\)=.*/\1/")
+if [ -n "$nav_aliases" ]; then
+    echo "$nav_aliases" | while read -r alias_name; do
+        nav_command=$(grep "^alias $alias_name=" "$ZSHRC_FILE" | sed "s/alias $alias_name='//;s/'$//" | sed "s/alias $alias_name=\"//;s/\"$//")
+        dir_path=$(echo "$nav_command" | sed 's/cd //')
+        
+        padded_name=$(printf "%-12s" "$alias_name")
+        
         case "$alias_name" in
-            work) echo 'echo "  work         - Jump to work projects directory"' >> "$SHORTCUTS_FILE" ;;
-            cdpui) echo 'echo "  cdpui        - Jump to cdp-ui project directory"' >> "$SHORTCUTS_FILE" ;;
-            cdpbe) echo 'echo "  cdpbe        - Jump to cdp-behind-service project directory"' >> "$SHORTCUTS_FILE" ;;
-            compose) echo 'echo "  compose      - Jump to docker-compose services directory"' >> "$SHORTCUTS_FILE" ;;
-            dotfiles) echo 'echo "  dotfiles     - Jump to dotfiles directory"' >> "$SHORTCUTS_FILE" ;;
+            root) echo "echo \"  $padded_name - Jump to home directory\"" >> "$SHORTCUTS_FILE" ;;
+            work) echo "echo \"  $padded_name - Jump to work projects directory\"" >> "$SHORTCUTS_FILE" ;;
+            *) echo "echo \"  $padded_name - Jump to $dir_path\"" >> "$SHORTCUTS_FILE" ;;
         esac
-    fi
-done
+    done
+fi
 
 echo 'echo ""' >> "$SHORTCUTS_FILE"
 echo 'echo "🔀 GIT SHORTCUTS:"' >> "$SHORTCUTS_FILE"
@@ -65,15 +69,15 @@ if [ -n "$git_aliases" ]; then
     echo "$git_aliases" | while read -r alias_name; do
         git_command=$(grep "^alias $alias_name=" "$ZSHRC_FILE" | sed "s/alias $alias_name='//;s/'$//" | sed "s/alias $alias_name=\"//;s/\"$//")
         
-        # Clean up function definitions to show simple description
+        padded_name=$(printf "%-12s" "$alias_name")
+        
         if [[ "$git_command" == *"function"* ]]; then
-            # Extract a simpler description for function aliases
             case "$alias_name" in
-                gcp) echo "echo \"  $alias_name    - git add, commit, and push\"" >> "$SHORTCUTS_FILE" ;;
-                *) echo "echo \"  $alias_name    - custom git function\"" >> "$SHORTCUTS_FILE" ;;
+                gcp) echo "echo \"  $padded_name - git add, commit, and push\"" >> "$SHORTCUTS_FILE" ;;
+                *) echo "echo \"  $padded_name - custom git function\"" >> "$SHORTCUTS_FILE" ;;
             esac
         else
-            echo "echo \"  $alias_name    - $git_command\"" >> "$SHORTCUTS_FILE"
+            echo "echo \"  $padded_name - $git_command\"" >> "$SHORTCUTS_FILE"
         fi
     done
 fi
@@ -81,20 +85,35 @@ fi
 echo 'echo ""' >> "$SHORTCUTS_FILE"
 echo 'echo "🐳 DOCKER SERVICES:"' >> "$SHORTCUTS_FILE"
 
-for alias_name in redis-up redis-down postgres-up postgres-down kafka-up kafka-down dev-services-up dev-services-down; do
-    if grep -q "^alias $alias_name=" "$ZSHRC_FILE"; then
-        case "$alias_name" in
-            redis-up) echo 'echo "  redis-up         - Start Redis container"' >> "$SHORTCUTS_FILE" ;;
-            redis-down) echo 'echo "  redis-down       - Stop Redis container"' >> "$SHORTCUTS_FILE" ;;
-            postgres-up) echo 'echo "  postgres-up      - Start PostgreSQL container"' >> "$SHORTCUTS_FILE" ;;
-            postgres-down) echo 'echo "  postgres-down    - Stop PostgreSQL container"' >> "$SHORTCUTS_FILE" ;;
-            kafka-up) echo 'echo "  kafka-up         - Start Kafka ecosystem"' >> "$SHORTCUTS_FILE" ;;
-            kafka-down) echo 'echo "  kafka-down       - Stop Kafka ecosystem"' >> "$SHORTCUTS_FILE" ;;
-            dev-services-up) echo 'echo "  dev-services-up  - Start all development services"' >> "$SHORTCUTS_FILE" ;;
-            dev-services-down) echo 'echo "  dev-services-down - Stop all development services"' >> "$SHORTCUTS_FILE" ;;
-        esac
-    fi
-done
+docker_aliases=$(grep -E "^alias [a-zA-Z0-9_-]+=.*docker-compose (up|down)" "$ZSHRC_FILE" | sed "s/alias \([^=]*\)=.*/\1/")
+
+compound_docker_aliases=$(grep -E "^alias (dev-services|all-services)" "$ZSHRC_FILE" | sed "s/alias \([^=]*\)=.*/\1/")
+
+all_docker_aliases=$(echo -e "$docker_aliases\n$compound_docker_aliases" | grep -v '^$')
+
+if [ -n "$all_docker_aliases" ]; then
+    echo "$all_docker_aliases" | while read -r alias_name; do
+        docker_command=$(grep "^alias $alias_name=" "$ZSHRC_FILE" | sed "s/alias $alias_name='//;s/'$//" | sed "s/alias $alias_name=\"//;s/\"$//")
+        
+        padded_name=$(printf "%-17s" "$alias_name")
+        
+        if [[ "$alias_name" == *"-up" ]]; then
+            service_name=$(echo "$alias_name" | sed 's/-up$//')
+            case "$service_name" in
+                dev-services) echo "echo \"  $padded_name - Start all development services\"" >> "$SHORTCUTS_FILE" ;;
+                *) echo "echo \"  $padded_name - Start $service_name container\"" >> "$SHORTCUTS_FILE" ;;
+            esac
+        elif [[ "$alias_name" == *"-down" ]]; then
+            service_name=$(echo "$alias_name" | sed 's/-down$//')
+            case "$service_name" in
+                dev-services) echo "echo \"  $padded_name - Stop all development services\"" >> "$SHORTCUTS_FILE" ;;
+                *) echo "echo \"  $padded_name - Stop $service_name container\"" >> "$SHORTCUTS_FILE" ;;
+            esac
+        else
+            echo "echo \"  $padded_name - $docker_command\"" >> "$SHORTCUTS_FILE"
+        fi
+    done
+fi
 
 echo 'echo ""' >> "$SHORTCUTS_FILE"
 echo 'echo "🔑 TOKEN GENERATION:"' >> "$SHORTCUTS_FILE"
@@ -113,16 +132,24 @@ done
 echo 'echo ""' >> "$SHORTCUTS_FILE"
 echo 'echo "📦 NPM SHORTCUTS:"' >> "$SHORTCUTS_FILE"
 
-for alias_name in nrs nrt nrtu nrdn; do
-    if grep -q "^alias $alias_name=" "$ZSHRC_FILE"; then
-        case "$alias_name" in
-            nrs) echo 'echo "  nrs          - npm run start"' >> "$SHORTCUTS_FILE" ;;
-            nrt) echo 'echo "  nrt          - npm run test"' >> "$SHORTCUTS_FILE" ;;
-            nrtu) echo 'echo "  nrtu         - npm run test:unit"' >> "$SHORTCUTS_FILE" ;;
-            nrdn) echo 'echo "  nrdn         - npm run dev:nodb"' >> "$SHORTCUTS_FILE" ;;
+npm_aliases=$(grep -E "^alias [a-zA-Z0-9_-]+=.*npm run " "$ZSHRC_FILE" | sed "s/alias \([^=]*\)=.*/\1/")
+if [ -n "$npm_aliases" ]; then
+    echo "$npm_aliases" | while read -r alias_name; do
+        npm_command=$(grep "^alias $alias_name=" "$ZSHRC_FILE" | sed "s/alias $alias_name='//;s/'$//" | sed "s/alias $alias_name=\"//;s/\"$//")
+        
+        padded_name=$(printf "%-12s" "$alias_name")
+        
+        script_name=$(echo "$npm_command" | sed 's/npm run //')
+        
+        case "$script_name" in
+            start) echo "echo \"  $padded_name - npm run start\"" >> "$SHORTCUTS_FILE" ;;
+            test) echo "echo \"  $padded_name - npm run test\"" >> "$SHORTCUTS_FILE" ;;
+            dev) echo "echo \"  $padded_name - npm run dev\"" >> "$SHORTCUTS_FILE" ;;
+            build) echo "echo \"  $padded_name - npm run build\"" >> "$SHORTCUTS_FILE" ;;
+            *) echo "echo \"  $padded_name - npm run $script_name\"" >> "$SHORTCUTS_FILE" ;;
         esac
-    fi
-done
+    done
+fi
 
 echo 'echo ""' >> "$SHORTCUTS_FILE"
 echo 'echo "📋 CLIPBOARD UTILITIES:"' >> "$SHORTCUTS_FILE"

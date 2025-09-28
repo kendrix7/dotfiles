@@ -14,65 +14,66 @@ source ~/dotfiles/.env.local 2>/dev/null || true
 # =============================================================================
 # PROJECT NAVIGATION
 # =============================================================================
-alias cdpui='cd ~/code/work/cdp-ui'
 alias cdpbe='cd ~/code/work/cdp-behind-service'
-alias work='cd ~/code/work'
+alias cdpui='cd ~/code/work/cdp-ui'
 alias compose='cd ~/code/work/docker-compose'
 alias dotfiles='cd ~/dotfiles'
+alias root='cd ~'
+alias work='cd ~/code/work'
 
 # =============================================================================
 # GIT SHORTCUTS
 # =============================================================================
-alias gs='git status'
 alias ga='git add'
-alias gc='git commit -m'
-alias gp='git push'
-alias gl='git pull'
-alias gco='git checkout'
 alias gb='git branch'
+alias gc='git commit -m'
+alias gco='git checkout'
 alias gd='git diff'
+alias gl='git pull'
 alias glog='git log --oneline --graph'
+alias gp='git push'
+alias gs='git status'
 alias gcp='function _gcp() { git add . && git commit -m "$1" && git push; }; _gcp'
 
 # =============================================================================
 # NPM SHORTCUTS
 # =============================================================================
+alias nrdn='npm run dev:nodb'
 alias nrs='npm run start'
 alias nrt='npm run test'
 alias nrtu='npm run test:unit'
-alias nrdn='npm run dev:nodb'
 
 # =============================================================================
 # DOCKER SERVICES
 # =============================================================================
-alias redis-up='cd ~/code/work/docker-compose/Redis && docker-compose up -d'
-alias redis-down='cd ~/code/work/docker-compose/Redis && docker-compose down'
-alias postgres-up='cd ~/code/work/docker-compose/Postgres && docker-compose up -d'
-alias postgres-down='cd ~/code/work/docker-compose/Postgres && docker-compose down'
-alias kafka-up='cd ~/code/work/docker-compose/Kafka && docker-compose up -d'
-alias kafka-down='cd ~/code/work/docker-compose/Kafka && docker-compose down'
-alias dev-services-up='redis-up && postgres-up && kafka-up'
 alias dev-services-down='redis-down && postgres-down && kafka-down'
+alias dev-services-up='redis-up && postgres-up && kafka-up'
+alias kafka-down='cd ~/code/work/docker-compose/Kafka && docker-compose down'
+alias kafka-up='cd ~/code/work/docker-compose/Kafka && docker-compose up -d'
+alias postgres-down='cd ~/code/work/docker-compose/Postgres && docker-compose down'
+alias postgres-up='cd ~/code/work/docker-compose/Postgres && docker-compose up -d'
+alias redis-down='cd ~/code/work/docker-compose/Redis && docker-compose down'
+alias redis-up='cd ~/code/work/docker-compose/Redis && docker-compose up -d'
 
 # =============================================================================
 # TOKEN GENERATION
 # =============================================================================
-alias token-local='cd ~/code/work/cdp-behind-service && ./bin/admin token --env local'
 alias token-dev='cd ~/code/work/cdp-behind-service && ./bin/admin token --env dev'
-alias token-stage='cd ~/code/work/cdp-behind-service && ./bin/admin token --env stage'
+alias token-local='cd ~/code/work/cdp-behind-service && ./bin/admin token --env local'
 alias token-prod='cd ~/code/work/cdp-behind-service && ./bin/admin token --env prod'
+alias token-stage='cd ~/code/work/cdp-behind-service && ./bin/admin token --env stage'
 
 # =============================================================================
 # UTILITY SHORTCUTS
 # =============================================================================
-alias killport='function _killport() { lsof -ti:$1 | xargs kill -9; }; _killport'
-alias shortcuts="~/dotfiles/list_shortcuts.sh"
-alias updatetoken="~/dotfiles/update_npm_token.sh"
-alias reload="source ~/.zshrc"
-alias update-shortcuts='~/dotfiles/update_shortcuts.sh'
-alias dev-status='~/dotfiles/dev_status.sh'
-alias copy-setup='cat ~/dotfiles/ai-setup-context.md | pbcopy && echo "✅ Development setup context copied to clipboard!"'
 alias copy-screenshot='~/dotfiles/copy_latest_screenshot.sh'
+alias copy-setup='cat ~/dotfiles/ai-setup-context.md | pbcopy && echo "✅ Development setup context copied to clipboard!"'
+alias dev-status='~/dotfiles/dev_status.sh'
+alias killport='function _killport() { lsof -ti:$1 | xargs kill -9; }; _killport'
+alias reload="source ~/.zshrc"
+alias shortcuts="~/dotfiles/list_shortcuts.sh"
+alias update-shortcuts='~/dotfiles/update_shortcuts.sh'
+alias update-token="~/dotfiles/update_npm_token.sh"
 
 # =============================================================================
 # ALIAS MANAGEMENT FUNCTIONS
