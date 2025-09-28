@@ -379,3 +379,100 @@ frontend-status() {
     fi
 }
 
+alias copy-setup='cat ~/dotfiles/ai-setup-context.md | pbcopy && echo "✅ Development setup context copied to clipboard!"'
+alias copy-screenshot='~/dotfiles/copy_latest_screenshot.sh'
+
+# Backend startup with current environment
+backend-start() {
+    echo "🚀 Starting backend with current environment..."
+    cd ~/code/work/backend-service
+    
+    # Check if VS Code is available and project isn't already open
+    if command -v code &> /dev/null; then
+        if ! pgrep -f "Visual Studio Code.*backend-service" > /dev/null; then
+            code .
+            echo "📝 Opened in VS Code"
+        else
+            echo "📝 Already open in VS Code"
+        fi
+    fi
+    
+    # Start with whatever .env configuration is currently set
+    echo "⚙️ Starting backend with current .env configuration..."
+    npm run dev:nodb
+}
+
+# Backend startup with current environment
+backend-start() {
+    echo "🚀 Starting backend with current environment..."
+    cd ~/code/work/cdp-behind-service || {
+        echo "❌ Failed to navigate to backend directory"
+        return 1
+    }
+    
+    echo "📂 Changed to $(pwd)"
+    
+    # Check if VS Code is available and project isn't already open
+    if command -v code &> /dev/null; then
+        if ! pgrep -f "Visual Studio Code.*cdp-behind-service" > /dev/null; then
+            code .
+            echo "📝 Opened in VS Code"
+        else
+            echo "📝 Already open in VS Code"
+        fi
+    fi
+    
+    # Start with whatever .env configuration is currently set
+    echo "⚙️ Starting backend with current .env configuration..."
+    npm run dev:nodb
+}
+
+# Backend startup with current environment
+backend-start() {
+    echo "🚀 Starting backend with current environment..."
+    cd ~/code/work/cdp-behind-service || {
+        echo "❌ Failed to navigate to backend directory"
+        return 1
+    }
+    
+    echo "📂 Changed to $(pwd)"
+    
+    # Check if VS Code is available and project isn't already open
+    if command -v code &> /dev/null; then
+        if ! pgrep -f "Visual Studio Code.*cdp-behind-service" > /dev/null; then
+            code .
+            echo "📝 Opened in VS Code"
+        else
+            echo "📝 Already open in VS Code"
+        fi
+    fi
+    
+    # Start with whatever .env configuration is currently set
+    echo "⚙️ Starting backend with current .env configuration..."
+    npm run dev:nodb
+}
+
+# Backend startup with current environment
+backend-start() {
+    echo "🚀 Starting backend with current environment..."
+    cd ~/code/work/cdp-behind-service || {
+        echo "❌ Failed to navigate to backend directory"
+        return 1
+    }
+    
+    echo "📂 Changed to $(pwd)"
+    
+    # Check if VS Code is available and project isn't already open
+    if command -v code &> /dev/null; then
+        if ! pgrep -f "Visual Studio Code.*cdp-behind-service" > /dev/null; then
+            code .
+            echo "📝 Opened in VS Code"
+        else
+            echo "📝 Already open in VS Code"
+        fi
+    fi
+    
+    # Start with whatever .env configuration is currently set
+    echo "⚙️ Starting backend with current .env configuration..."
+    npm run dev:nodb
+}

@@ -1,47 +1,28 @@
 #!/bin/bash
 
-SHORTCUTS_FILE="$HOME/dotfiles/list_shortcuts.sh"
-ZSHRC_FILE="$HOME/.zshrc"
 DOTFILES_DIR="$HOME/dotfiles"
+ZSHRC_FILE="$DOTFILES_DIR/.zshrc"
+SHORTCUTS_FILE="$DOTFILES_DIR/list_shortcuts.sh"
 
-# Create the shortcuts script header
+# Create backup of current shortcuts file to compare later
+TEMP_SHORTCUTS="/tmp/shortcuts_backup.sh"
+if [ -f "$SHORTCUTS_FILE" ]; then
+    cp "$SHORTCUTS_FILE" "$TEMP_SHORTCUTS"
+fi
+
+# Create the shortcuts file
 cat > "$SHORTCUTS_FILE" << 'HEADER'
 #!/bin/bash
+
 echo "========================================="
 echo "       MY DEVELOPMENT SHORTCUTS"
 echo "========================================="
 echo ""
+
+echo "📁 PROJECT NAVIGATION:"
 HEADER
 
-# 🚀 BACKEND ENVIRONMENT SECTION
-echo 'echo "🚀 BACKEND ENVIRONMENT:"' >> "$SHORTCUTS_FILE"
-grep -E "^backend-[a-zA-Z0-9_-]+\(\)" "$ZSHRC_FILE" | sed 's/().*//' | while IFS= read -r func_name; do
-    case "$func_name" in
-        backend-start) echo 'echo "  backend-start    - Start backend with current environment and VS Code"' >> "$SHORTCUTS_FILE" ;;
-        *) echo "echo "  $func_name    - Backend function"" >> "$SHORTCUTS_FILE" ;;
-    esac
-done
-
-echo 'echo ""' >> "$SHORTCUTS_FILE"
-# 🌐 FRONTEND ENVIRONMENTS SECTION
-echo 'echo "🌐 FRONTEND ENVIRONMENTS:"' >> "$SHORTCUTS_FILE"
-frontend_functions=$(grep -E "^frontend-[a-zA-Z0-9_-]+\(\)" "$ZSHRC_FILE" | sed 's/().*//')
-if [ -n "$frontend_functions" ]; then
-    echo "$frontend_functions" | while read -r func_name; do
-        case "$func_name" in
-            frontend-local) echo 'echo "  frontend-local   - Start frontend with local backend"' >> "$SHORTCUTS_FILE" ;;
-            frontend-dev) echo 'echo "  frontend-dev     - Start frontend with dev backend"' >> "$SHORTCUTS_FILE" ;;
-            frontend-stage) echo 'echo "  frontend-stage   - Start frontend with stage backend"' >> "$SHORTCUTS_FILE" ;;
-            frontend-branch) echo 'echo "  frontend-branch  - Start frontend with branch backend: frontend-branch <name>"' >> "$SHORTCUTS_FILE" ;;
-            frontend-status) echo 'echo "  frontend-status  - Check frontend environment status"' >> "$SHORTCUTS_FILE" ;;
-            *) echo "echo \"  $func_name    - Frontend function\"" >> "$SHORTCUTS_FILE" ;;
-        esac
-    done
-fi
-
-echo 'echo ""' >> "$SHORTCUTS_FILE"
-echo 'echo "📁 PROJECT NAVIGATION:"' >> "$SHORTCUTS_FILE"
-
+# Navigation aliases
 for alias_name in work cdpui cdpbe compose dotfiles; do
     if grep -q "^alias $alias_name=" "$ZSHRC_FILE"; then
         case "$alias_name" in
@@ -57,7 +38,8 @@ done
 echo 'echo ""' >> "$SHORTCUTS_FILE"
 echo 'echo "🔀 GIT SHORTCUTS:"' >> "$SHORTCUTS_FILE"
 
-for alias_name in gs ga gc gp gl gco gb gd glog gcp; do
+# Git aliases
+for alias_name in gs ga gc gp gl gco gb gd glog; do
     if grep -q "^alias $alias_name=" "$ZSHRC_FILE"; then
         case "$alias_name" in
             gs) echo 'echo "  gs           - git status"' >> "$SHORTCUTS_FILE" ;;
@@ -69,14 +51,18 @@ for alias_name in gs ga gc gp gl gco gb gd glog gcp; do
             gb) echo 'echo "  gb           - git branch"' >> "$SHORTCUTS_FILE" ;;
             gd) echo 'echo "  gd           - git diff"' >> "$SHORTCUTS_FILE" ;;
             glog) echo 'echo "  glog         - git log --oneline --graph"' >> "$SHORTCUTS_FILE" ;;
-            gcp) echo 'echo "  gcp '"'"'msg'"'"'    - git add . && git commit -m '"'"'msg'"'"' && git push"' >> "$SHORTCUTS_FILE" ;;
         esac
     fi
 done
 
+if grep -q "gcp()" "$ZSHRC_FILE"; then
+    echo 'echo "  gcp '"'"'msg'"'"'    - git add . && git commit -m '"'"'msg'"'"' && git push"' >> "$SHORTCUTS_FILE"
+fi
+
 echo 'echo ""' >> "$SHORTCUTS_FILE"
 echo 'echo "🐳 DOCKER SERVICES:"' >> "$SHORTCUTS_FILE"
 
+# Docker aliases
 for alias_name in redis-up redis-down postgres-up postgres-down kafka-up kafka-down dev-services-up dev-services-down; do
     if grep -q "^alias $alias_name=" "$ZSHRC_FILE"; then
         case "$alias_name" in
@@ -95,6 +81,7 @@ done
 echo 'echo ""' >> "$SHORTCUTS_FILE"
 echo 'echo "🔑 TOKEN GENERATION:"' >> "$SHORTCUTS_FILE"
 
+# Token aliases
 for alias_name in token-local token-dev token-stage token-prod; do
     if grep -q "^alias $alias_name=" "$ZSHRC_FILE"; then
         case "$alias_name" in
@@ -109,6 +96,7 @@ done
 echo 'echo ""' >> "$SHORTCUTS_FILE"
 echo 'echo "📦 NPM SHORTCUTS:"' >> "$SHORTCUTS_FILE"
 
+# NPM aliases
 for alias_name in nrs nrt nrtu nrdn; do
     if grep -q "^alias $alias_name=" "$ZSHRC_FILE"; then
         case "$alias_name" in
@@ -121,25 +109,30 @@ for alias_name in nrs nrt nrtu nrdn; do
 done
 
 echo 'echo ""' >> "$SHORTCUTS_FILE"
+echo 'echo "🌐 FRONTEND ENVIRONMENTS:"' >> "$SHORTCUTS_FILE"
+echo 'echo "  frontend-local   - Start frontend with local backend"' >> "$SHORTCUTS_FILE"
+echo 'echo "  frontend-dev     - Start frontend with dev backend"' >> "$SHORTCUTS_FILE"
+echo 'echo "  frontend-stage   - Start frontend with stage backend"' >> "$SHORTCUTS_FILE"
+echo 'echo "  frontend-branch  - Start frontend with branch backend: frontend-branch <name>"' >> "$SHORTCUTS_FILE"
+
+echo 'echo ""' >> "$SHORTCUTS_FILE"
 echo 'echo "📋 CLIPBOARD UTILITIES:"' >> "$SHORTCUTS_FILE"
 
-for alias_name in copy-setup copy-screenshot; do
-    if grep -q "^alias $alias_name=" "$ZSHRC_FILE"; then
-        case "$alias_name" in
-            copy-setup) echo 'echo "  copy-setup       - Copy full development environment context to clipboard"' >> "$SHORTCUTS_FILE" ;;
-            copy-screenshot) echo 'echo "  copy-screenshot  - Copy most recent screenshot to clipboard"' >> "$SHORTCUTS_FILE" ;;
-        esac
-    fi
-done
+# Clipboard aliases
+if grep -q "^alias copy-setup=" "$ZSHRC_FILE"; then
+    echo 'echo "  copy-setup       - Copy full development environment context to clipboard"' >> "$SHORTCUTS_FILE"
+fi
 
 echo 'echo ""' >> "$SHORTCUTS_FILE"
 echo 'echo "🛠️  UTILITY SCRIPTS:"' >> "$SHORTCUTS_FILE"
 
+# Key utilities
 echo 'echo "  dev-status       - Check development environment status (-v for verbose)"' >> "$SHORTCUTS_FILE"
 echo 'echo "  update-shortcuts - Auto-update shortcuts list and push to git"' >> "$SHORTCUTS_FILE"
 echo 'echo "  add-alias        - Add new alias: add-alias <name> <command>"' >> "$SHORTCUTS_FILE"
 echo 'echo "  remove-alias     - Remove alias: remove-alias <name>"' >> "$SHORTCUTS_FILE"
 
+# Other utility aliases
 for alias_name in screenshots dotfiles-push reload shortcuts; do
     if grep -q "^alias $alias_name=" "$ZSHRC_FILE"; then
         case "$alias_name" in
@@ -155,34 +148,48 @@ if grep -q "killport()" "$ZSHRC_FILE"; then
     echo 'echo "  killport 3000    - Kill process on port 3000"' >> "$SHORTCUTS_FILE"
 fi
 
+# Add footer
 cat >> "$SHORTCUTS_FILE" << 'FOOTER'
 echo ""
+
 echo "💡 TIPS:"
-echo "  - All aliases and functions are defined in ~/.zshrc"
+echo "  - All aliases are defined in ~/.zshrc"
 echo "  - Run 'source ~/.zshrc' after editing shell config"
 echo "  - Use 'which aliasname' to see what an alias does"
-echo "  - Use 'declare -f functionname' to see function definition"
 echo "  - Run 'dev-status' for environment health check"
 echo ""
+
 echo "Run individual commands to test them out!"
 FOOTER
 
 chmod +x "$SHORTCUTS_FILE"
 
+# Check if there were actually any changes
+if [ -f "$TEMP_SHORTCUTS" ] && cmp -s "$SHORTCUTS_FILE" "$TEMP_SHORTCUTS"; then
+    echo "📋 No changes detected in shortcuts"
+    rm -f "$TEMP_SHORTCUTS"
+    exit 0
+fi
+
+# Auto-commit and push changes only if there were actual changes
 cd "$DOTFILES_DIR"
 if ! git diff --quiet HEAD -- list_shortcuts.sh 2>/dev/null; then
     echo "📝 Changes detected, committing to git..."
     git add list_shortcuts.sh
     TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
     git commit -m "Auto-update shortcuts list - $TIMESTAMP"
-    
+
     if git remote get-url origin &> /dev/null; then
         echo "📤 Pushing changes to GitHub..."
         git push
         echo "✅ Changes pushed to GitHub successfully!"
+    else
+        echo "⚠️  No remote repository configured, skipping push"
     fi
+    echo "✅ Shortcuts list updated successfully!"
 else
-    echo "📋 No changes detected in shortcuts"
+    echo "📋 No git changes detected"
 fi
 
-echo "✅ Shortcuts list updated successfully!"
+# Clean up temp file
+rm -f "$TEMP_SHORTCUTS"
