@@ -13,16 +13,6 @@ echo "========================================="
 echo ""
 HEADER
 
-# 🚀 BACKEND ENVIRONMENT SECTION
-echo 'echo "🚀 BACKEND ENVIRONMENT:"' >> "$SHORTCUTS_FILE"
-grep -E "^backend-[a-zA-Z0-9_-]+\(\)" "$ZSHRC_FILE" | sed 's/().*//' | while IFS= read -r func_name; do
-    case "$func_name" in
-        backend-start) echo 'echo "  backend-start    - Start backend with current environment and VS Code"' >> "$SHORTCUTS_FILE" ;;
-        *) echo "echo "  $func_name    - Backend function"" >> "$SHORTCUTS_FILE" ;;
-    esac
-done
-
-echo 'echo ""' >> "$SHORTCUTS_FILE"
 # 🌐 FRONTEND ENVIRONMENTS SECTION
 echo 'echo "🌐 FRONTEND ENVIRONMENTS:"' >> "$SHORTCUTS_FILE"
 frontend_functions=$(grep -E "^frontend-[a-zA-Z0-9_-]+\(\)" "$ZSHRC_FILE" | sed 's/().*//')
@@ -35,6 +25,19 @@ if [ -n "$frontend_functions" ]; then
             frontend-branch) echo 'echo "  frontend-branch  - Start frontend with branch backend: frontend-branch <name>"' >> "$SHORTCUTS_FILE" ;;
             frontend-status) echo 'echo "  frontend-status  - Check frontend environment status"' >> "$SHORTCUTS_FILE" ;;
             *) echo "echo \"  $func_name    - Frontend function\"" >> "$SHORTCUTS_FILE" ;;
+        esac
+    done
+fi
+
+echo 'echo ""' >> "$SHORTCUTS_FILE"
+# 🚀 BACKEND ENVIRONMENT SECTION
+echo 'echo "🚀 BACKEND ENVIRONMENT:"' >> "$SHORTCUTS_FILE"
+backend_functions=$(grep -E "^backend-[a-zA-Z0-9_-]+\(\)" "$ZSHRC_FILE" | sed 's/().*//')
+if [ -n "$backend_functions" ]; then
+    echo "$backend_functions" | while read -r func_name; do
+        case "$func_name" in
+            backend-start) echo 'echo "  backend-start    - Start backend with current environment and VS Code"' >> "$SHORTCUTS_FILE" ;;
+            *) echo "echo \"  $func_name    - Backend function\"" >> "$SHORTCUTS_FILE" ;;
         esac
     done
 fi
@@ -57,22 +60,23 @@ done
 echo 'echo ""' >> "$SHORTCUTS_FILE"
 echo 'echo "🔀 GIT SHORTCUTS:"' >> "$SHORTCUTS_FILE"
 
-for alias_name in gs ga gc gp gl gco gb gd glog gcp; do
-    if grep -q "^alias $alias_name=" "$ZSHRC_FILE"; then
-        case "$alias_name" in
-            gs) echo 'echo "  gs           - git status"' >> "$SHORTCUTS_FILE" ;;
-            ga) echo 'echo "  ga           - git add"' >> "$SHORTCUTS_FILE" ;;
-            gc) echo 'echo "  gc '"'"'msg'"'"'     - git commit -m '"'"'msg'"'"'"' >> "$SHORTCUTS_FILE" ;;
-            gp) echo 'echo "  gp           - git push"' >> "$SHORTCUTS_FILE" ;;
-            gl) echo 'echo "  gl           - git pull"' >> "$SHORTCUTS_FILE" ;;
-            gco) echo 'echo "  gco          - git checkout"' >> "$SHORTCUTS_FILE" ;;
-            gb) echo 'echo "  gb           - git branch"' >> "$SHORTCUTS_FILE" ;;
-            gd) echo 'echo "  gd           - git diff"' >> "$SHORTCUTS_FILE" ;;
-            glog) echo 'echo "  glog         - git log --oneline --graph"' >> "$SHORTCUTS_FILE" ;;
-            gcp) echo 'echo "  gcp '"'"'msg'"'"'    - git add . && git commit -m '"'"'msg'"'"' && git push"' >> "$SHORTCUTS_FILE" ;;
-        esac
-    fi
-done
+git_aliases=$(grep -E "^alias [a-zA-Z0-9_-]+=.*git " "$ZSHRC_FILE" | sed "s/alias \([^=]*\)=.*/\1/")
+if [ -n "$git_aliases" ]; then
+    echo "$git_aliases" | while read -r alias_name; do
+        git_command=$(grep "^alias $alias_name=" "$ZSHRC_FILE" | sed "s/alias $alias_name='//;s/'$//" | sed "s/alias $alias_name=\"//;s/\"$//")
+        
+        # Clean up function definitions to show simple description
+        if [[ "$git_command" == *"function"* ]]; then
+            # Extract a simpler description for function aliases
+            case "$alias_name" in
+                gcp) echo "echo \"  $alias_name    - git add, commit, and push\"" >> "$SHORTCUTS_FILE" ;;
+                *) echo "echo \"  $alias_name    - custom git function\"" >> "$SHORTCUTS_FILE" ;;
+            esac
+        else
+            echo "echo \"  $alias_name    - $git_command\"" >> "$SHORTCUTS_FILE"
+        fi
+    done
+fi
 
 echo 'echo ""' >> "$SHORTCUTS_FILE"
 echo 'echo "🐳 DOCKER SERVICES:"' >> "$SHORTCUTS_FILE"

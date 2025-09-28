@@ -184,6 +184,16 @@ frontend-local() {
     
     cd ~/code/work/cdp-ui
     
+    # Check if VS Code is available and project isn't already open
+    if command -v code &> /dev/null; then
+        if ! pgrep -f "Visual Studio Code.*cdp-ui" > /dev/null; then
+            code .
+            echo "📝 Opened in VS Code"
+        else
+            echo "📝 Already open in VS Code"
+        fi
+    fi
+    
     sed -i.tmp 's/^VITE_BEHIND_SERVICE_API_URL=/#VITE_BEHIND_SERVICE_API_URL=/' .env
     sed -i.tmp 's/^# VITE_BEHIND_SERVICE_API_URL=http:\/\/localhost:3001/VITE_BEHIND_SERVICE_API_URL=http:\/\/localhost:3001/' .env
     sed -i.tmp 's/^#VITE_BEHIND_SERVICE_API_URL=http:\/\/localhost:3001/VITE_BEHIND_SERVICE_API_URL=http:\/\/localhost:3001/' .env
@@ -199,6 +209,16 @@ frontend-dev() {
     
     cd ~/code/work/cdp-ui
     
+    # Check if VS Code is available and project isn't already open
+    if command -v code &> /dev/null; then
+        if ! pgrep -f "Visual Studio Code.*cdp-ui" > /dev/null; then
+            code .
+            echo "📝 Opened in VS Code"
+        else
+            echo "📝 Already open in VS Code"
+        fi
+    fi
+    
     sed -i.tmp 's/^VITE_BEHIND_SERVICE_API_URL=/#VITE_BEHIND_SERVICE_API_URL=/' .env
     sed -i.tmp 's/^#VITE_BEHIND_SERVICE_API_URL=https:\/\/cdp-behind-service\.dev\.platform\.aws\.chgit\.com/VITE_BEHIND_SERVICE_API_URL=https:\/\/cdp-behind-service.dev.platform.aws.chgit.com/' .env
     
@@ -212,6 +232,16 @@ frontend-stage() {
     backup_and_modify_frontend_env
     
     cd ~/code/work/cdp-ui
+    
+    # Check if VS Code is available and project isn't already open
+    if command -v code &> /dev/null; then
+        if ! pgrep -f "Visual Studio Code.*cdp-ui" > /dev/null; then
+            code .
+            echo "📝 Opened in VS Code"
+        else
+            echo "📝 Already open in VS Code"
+        fi
+    fi
     
     sed -i.tmp 's/^VITE_BEHIND_SERVICE_API_URL=/#VITE_BEHIND_SERVICE_API_URL=/' .env
     sed -i.tmp 's/^#VITE_BEHIND_SERVICE_API_URL=https:\/\/cdp-behind-service\.stage\.platform\.aws\.chgit\.com/VITE_BEHIND_SERVICE_API_URL=https:\/\/cdp-behind-service.stage.platform.aws.chgit.com/' .env
@@ -234,6 +264,16 @@ frontend-branch() {
     backup_and_modify_frontend_env
     
     cd ~/code/work/cdp-ui
+    
+    # Check if VS Code is available and project isn't already open
+    if command -v code &> /dev/null; then
+        if ! pgrep -f "Visual Studio Code.*cdp-ui" > /dev/null; then
+            code .
+            echo "📝 Opened in VS Code"
+        else
+            echo "📝 Already open in VS Code"
+        fi
+    fi
     
     sed -i.tmp 's/^VITE_BEHIND_SERVICE_API_URL=/#VITE_BEHIND_SERVICE_API_URL=/' .env
     
